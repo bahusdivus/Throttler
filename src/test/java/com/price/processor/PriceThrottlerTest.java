@@ -69,4 +69,16 @@ class PriceThrottlerTest {
         assertEquals("test1_3.0", receiver.getTestValue());
 
     }
+
+    @Test
+    public void testException() throws InterruptedException {
+        PriceProcessor mainProcessor = new PriceThrottler();
+        TestProcessor receiver = new TestProcessor(1, (String ccyPair, Double rate) -> {
+            throw new RuntimeException("Exception");
+        });
+        mainProcessor.subscribe(receiver);
+
+        mainProcessor.onPrice("test1_", 1);
+        TimeUnit.SECONDS.sleep(20);
+    }
 }
